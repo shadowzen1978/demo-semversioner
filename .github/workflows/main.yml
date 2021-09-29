@@ -41,9 +41,17 @@ jobs:
       - name : Run Semversioner Changelog
         run: |
           semversioner changelog > CHANGELOG.md
-          git add CHANGELOG.md
+          # git add CHANGELOG.md
         
-      - name: Commit & Push changes
-        uses: actions-js/push@master
+      #- name: Commit & Push changes
+      #  uses: actions-js/push@master
+      #  with:
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
         with:
+          author_name: Your Name
+          author_email: mail@example.com
+          message: 'Your commit message'
+          add: 'CHANGELOG.md'
           github_token: ${{ secrets.GITHUB_TOKEN }}
