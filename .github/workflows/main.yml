@@ -32,14 +32,17 @@ jobs:
           pip3 install semversioner
       
       # This is just an example step.  Normally this step would be handled on
-      # non-master branches
+      # non-master branches.
+      # Creates a .semversioner/next-release folder with hashes for each change
       - name: Patch bump
         run: |
           semversioner add-change --type patch --description "Increment patch version."
           git pull && git add .semversioner/*
       
-      # Attempt to run Semversioner Release.  This may fail if no changes detected
-      # so we ignore errors here
+      # Attempt to run Semversioner Release.  This may fail if no changes detected.
+      # Should probably check for existence of .semversioner/next-release before running.
+      # so we ignore errors here.
+      # Creates x.x.x.json for every release
       - name: Run Semversioner Release
         run: semversioner release
         continue-on-error: true
