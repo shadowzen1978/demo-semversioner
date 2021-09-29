@@ -31,9 +31,12 @@ jobs:
           python3 --version
           pip3 install semversioner
           echo test, and deploy your project.
-          
+      
+      # Attempt to run Semversioner Release.  This may fail if no changes detected
+      # so we ignore errors here
       - name: Run Semversioner Release
         run: semversioner release
+        continue-on-error: true
         
       - name : Run Semversioner Changelog
         run: semversioner changelog > CHANGELOG.md
