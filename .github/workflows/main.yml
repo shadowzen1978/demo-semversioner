@@ -48,11 +48,17 @@ jobs:
         run: |
           semversioner changelog > CHANGELOG.md
           git pull && git add CHANGELOG.md
+          
+      - name: Show info
+        run: |
+          git fetch && git status
+          echo "github.ref is: ${{ github.ref }}"
         
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
       #- name: Commit changes
       #  uses: EndBug/add-and-commit@v7
       #  with:
