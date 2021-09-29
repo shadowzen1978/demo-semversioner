@@ -1,0 +1,6 @@
+[
+  {
+    "description": "Increment patch version.",
+    "type": "patch"
+  }
+]
