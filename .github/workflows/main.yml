@@ -36,6 +36,7 @@ jobs:
       - name: Patch bump
         run: |
           semversioner add-change --type patch --description "Increment patch version."
+          git pull && git add .semversioner/*
       
       # Attempt to run Semversioner Release.  This may fail if no changes detected
       # so we ignore errors here
