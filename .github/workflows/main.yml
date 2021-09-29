@@ -30,7 +30,12 @@ jobs:
         run: |
           python3 --version
           pip3 install semversioner
-          echo test, and deploy your project.
+      
+      # This is just an example step.  Normally this step would be handled on
+      # non-master branches
+      - name: Patch bump
+        run: |
+          semversioner add-change --type patch --description "Increment patch version."
       
       # Attempt to run Semversioner Release.  This may fail if no changes detected
       # so we ignore errors here
