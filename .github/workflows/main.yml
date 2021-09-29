@@ -38,6 +38,7 @@ jobs:
         run: |
           semversioner add-change --type patch --description "Increment patch version."
           git pull && git add .semversioner/*
+          cat .semversioner/next-release/*
       
       # Attempt to run Semversioner Release.  This may fail if no changes detected.
       # Should probably check for existence of .semversioner/next-release before running.
