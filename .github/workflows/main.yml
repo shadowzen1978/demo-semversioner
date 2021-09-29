@@ -44,11 +44,13 @@ jobs:
       # Should probably check for existence of .semversioner/next-release before running.
       # so we ignore errors here.
       # We only want to run git tag on successful release.
-      # TODO:  message on annotated tag should be contents of release file.
+      # TODO:  message on annotated tag should be contents of release file.  Needs user info to be set
+      # for annotated tagging
       # Creates x.x.x.json for every release under .semversioner
       - name: Run Semversioner Release
         run: |
-          semversioner release && git tag -a v$(semversioner current-version) -m ".placeholder"
+          # semversioner release && git tag -a v$(semversioner current-version) -m ".placeholder"
+          semversioner release && git tag v$(semversioner current-version)
         continue-on-error: true
         
       - name : Run Semversioner Changelog
@@ -61,7 +63,7 @@ jobs:
           git fetch && git status
           echo "github.ref is: ${{ github.ref }}"
           CURRENT_VERSION=$(semversioner current-version)
-          echo "Current version: $CURRENT_VERSION
+          echo "Current version: $CURRENT_VERSION"
         
       - name: Commit & Push changes
         uses: actions-js/push@master
