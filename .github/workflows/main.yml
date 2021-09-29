@@ -39,7 +39,9 @@ jobs:
         continue-on-error: true
         
       - name : Run Semversioner Changelog
-        run: semversioner changelog > CHANGELOG.md
+        run: |
+          semversioner changelog > CHANGELOG.md
+          git add CHANGELOG.md
         
       - name: Commit & Push changes
         uses: actions-js/push@master
