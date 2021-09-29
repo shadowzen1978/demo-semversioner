@@ -41,7 +41,7 @@ jobs:
       - name : Run Semversioner Changelog
         run: |
           semversioner changelog > CHANGELOG.md
-         git pull && git add CHANGELOG.md
+          git pull && git add CHANGELOG.md
         
       - name: Commit & Push changes
         uses: actions-js/push@master
