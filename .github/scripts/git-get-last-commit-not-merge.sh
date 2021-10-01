@@ -14,9 +14,8 @@ while [[ "$LAST_COMMIT_MESSAGE" =~ ^Merge[[:space:]]branch.*$
           || "$LAST_COMMIT_MESSAGE" =~ ^chore:.*$ ]]; do
   echo "Last message is merge message: $LAST_COMMIT_MESSAGE"
   echo -e "Debug info:\n counter is $COUNTER"
-  echo -e "Git command output: "
-  git --no-pager log --pretty=format:"%s" -n 1 --skip "$COUNTER"
-  LAST_COMMIT_MESSAGE="$(git --no-pager log --pretty=format:"%s" -n 1 --skip $COUNTER)"
+  echo -e "Git command output: $(git --no-pager log --pretty=format:"%s" -n 1 --skip=$COUNTER)"
+  LAST_COMMIT_MESSAGE="$(git --no-pager log --pretty=format:"%s" -n 1 --skip=$COUNTER)"
   COUNTER=$((COUNTER+1))
 done
 
