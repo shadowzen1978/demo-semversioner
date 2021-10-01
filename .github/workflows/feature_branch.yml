@@ -40,6 +40,7 @@ jobs:
       # Creates a .semversioner/next-release folder with hashes for each change
       - name: Minor bump
         run: |
+          git version
           MSG_CHECK_SCRIPT=${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
           bash $MSG_CHECK_SCRIPT
           source $MSG_CHECK_SCRIPT
