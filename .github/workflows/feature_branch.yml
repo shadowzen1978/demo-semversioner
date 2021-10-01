@@ -33,14 +33,16 @@ jobs:
           python3 --version
           pip3 install semversioner
 
-      # Increments a minor chnage each push
+      # Increments a minor change each push
       # For now is just a test message but will incorporate logic
       # to create a change for every commit since the last push.
+      # For now we get the last message that IS NOT a chore or merge message.
       # Creates a .semversioner/next-release folder with hashes for each change
       - name: Minor bump
         run: |
-          LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1)
-          semversioner add-change --type minor --description "$LAST_COMMIT_MSG"
+          source ${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
+          if [ -z ${GIT_LAST_COMMIT_MSG+x} ];then GIT_LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1); fi
+          semversioner add-change --type minor --description "$GIT_LAST_COMMIT_MSG"
           git pull && git add .semversioner/*
           cat .semversioner/next-release/*
 
