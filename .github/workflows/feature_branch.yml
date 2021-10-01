@@ -39,7 +39,8 @@ jobs:
       # Creates a .semversioner/next-release folder with hashes for each change
       - name: Minor bump
         run: |
-          semversioner add-change --type minor --description "Increment minor version."
+          LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1)
+          semversioner add-change --type minor --description "$LAST_COMMIT_MSG"
           git pull && git add .semversioner/*
           cat .semversioner/next-release/*
 
