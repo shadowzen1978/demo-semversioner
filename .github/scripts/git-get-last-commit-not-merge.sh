@@ -5,9 +5,9 @@
 # this can filter out messages related to automation tasks that are not
 # relevant to material changes in the repo.
 
-echo "Last 5 commit messages"
-git --no-pager log --pretty=format:"%s" -n 5
-echo ""
+#echo "Last 5 commit messages"
+#git --no-pager log --pretty=format:"%s" -n 5
+#echo ""
 
 LAST_COMMIT_MESSAGE=$(git --no-pager log --pretty=format:"%s" -n 1)
 
@@ -16,7 +16,7 @@ COUNTER=1
 
 while [[ "$LAST_COMMIT_MESSAGE" =~ ^Merge[[:space:]]branch.*$
           || "$LAST_COMMIT_MESSAGE" =~ ^chore:.*$ ]]; do
-  echo "Last message is merge message: $LAST_COMMIT_MESSAGE"
+  echo "Last message is merge or change message: $LAST_COMMIT_MESSAGE"
   echo -e "Debug info:\n counter is $COUNTER"
   echo -e "Git command output: "
   GIT_TRACE=1 git --no-pager log --pretty=format:"%s" -n 1 --skip=$COUNTER
