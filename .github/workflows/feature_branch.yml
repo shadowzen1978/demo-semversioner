@@ -40,7 +40,9 @@ jobs:
       # Creates a .semversioner/next-release folder with hashes for each change
       - name: Minor bump
         run: |
-          source ${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
+          MSG_CHECK_SCRIPT=${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
+          bash $MSG_CHECK_SCRIPT
+          source $MSG_CHECK_SCRIPT
           if [ -z ${GIT_LAST_COMMIT_MSG+x} ];then GIT_LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1); fi
           semversioner add-change --type minor --description "$GIT_LAST_COMMIT_MSG"
           git pull && git add .semversioner/*
