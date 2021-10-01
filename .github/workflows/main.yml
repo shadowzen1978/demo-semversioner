@@ -7,8 +7,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  #pull_request:
+  #  branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
         run: |
           python3 --version
           pip3 install semversioner
-      
+
       # This is just an example step.  Normally this step would be handled on
       # non-master branches.
       # Creates a .semversioner/next-release folder with hashes for each change
@@ -39,7 +39,7 @@ jobs:
           semversioner add-change --type patch --description "Increment patch version."
           git pull && git add .semversioner/*
           cat .semversioner/next-release/*
-      
+
       # Attempt to run Semversioner Release.  This may fail if no changes detected.
       # Should probably check for existence of .semversioner/next-release before running.
       # so we ignore errors here.
@@ -52,19 +52,19 @@ jobs:
           # semversioner release && git tag -a v$(semversioner current-version) -m ".placeholder"
           semversioner release && git tag v$(semversioner current-version)
         continue-on-error: true
-        
+
       - name : Run Semversioner Changelog
         run: |
           semversioner changelog > CHANGELOG.md
           git pull && git add CHANGELOG.md
-          
+
       - name: Show info
         run: |
           git fetch && git status
           echo "github.ref is: ${{ github.ref }}"
           CURRENT_VERSION=$(semversioner current-version)
           echo "Current version: $CURRENT_VERSION"
-        
+
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
