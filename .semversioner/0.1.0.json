@@ -1,0 +1,54 @@
+[
+  {
+    "description": "Increment minor version.",
+    "type": "minor"
+  },
+  {
+    "description": "Increment minor version.",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "Merge branch 'feature/add-feature-branch-workflow' of github.com:shadowzen1978/demo-semversioner into feature/add-feature-branch-workflow",
+    "type": "minor"
+  },
+  {
+    "description": "added more debug info.",
+    "type": "minor"
+  },
+  {
+    "description": "added script to determine a last message that is not a merge or chore message and incorporated into feature workflow.",
+    "type": "minor"
+  }
+]
