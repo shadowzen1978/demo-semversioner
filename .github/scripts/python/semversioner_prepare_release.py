@@ -16,8 +16,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # Set a bunch of flags here.  Eventually will have most of these
 # passable as cli args.
-debug_mode=False
-test_mode=False
+debug_mode=True
+test_mode=True
 use_test_messages= False
 clean_release=True
 clean_action='delete'
