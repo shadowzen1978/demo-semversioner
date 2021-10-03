@@ -1,4 +1,0 @@
-{
-  "type": "minor",
-  "description": "added script to determine a last message that is not a merge or chore message and incorporated into feature workflow."
-}
