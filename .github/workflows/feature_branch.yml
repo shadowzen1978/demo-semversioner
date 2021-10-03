@@ -39,19 +39,24 @@ jobs:
           python3 --version
           pip3 install semversioner
 
+      # NOTE:
+      # Commenting out the below section for now as running this step on
+      # every push interrupt can interrupt developer workflow and productivity.
+      # I think there is a better way to run this during a Pull Request instead.
+      #
       # Increments a minor change each push
       # For now is just a test message but will incorporate logic
       # to create a change for every commit since the last push.
       # For now we get the last message that IS NOT a chore or merge message.
       # Creates a .semversioner/next-release folder with hashes for each change
-      - name: Minor bump
-        run: |
-          source ${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
-          echo "Message from script: $GIT_LAST_COMMIT_MSG"
-          if [ -z ${GIT_LAST_COMMIT_MSG+x} ];then GIT_LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1); fi
-          semversioner add-change --type minor --description "$GIT_LAST_COMMIT_MSG"
-          git pull && git add .semversioner/*
-          cat .semversioner/next-release/*
+      #- name: Minor bump
+      #  run: |
+      #    source ${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
+      #    echo "Message from script: $GIT_LAST_COMMIT_MSG"
+      #    if [ -z ${GIT_LAST_COMMIT_MSG+x} ];then GIT_LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1); fi
+      #    semversioner add-change --type minor --description "$GIT_LAST_COMMIT_MSG"
+      #    git pull && git add .semversioner/*
+      #    cat .semversioner/next-release/*
 
 
       - name: Show info
