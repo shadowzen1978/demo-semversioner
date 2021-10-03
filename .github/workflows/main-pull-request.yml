@@ -44,6 +44,7 @@ jobs:
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Current branch $CURRENT_BRANCH"
+          echo "Pull request from: ${{ github.head_ref }}"
           python3 ${{ github.workspace}}/.github/scripts/python/semversioner_prepare_release.py
           git pull && git add .semversioner/*
           cat .semversioner/next-release/*
