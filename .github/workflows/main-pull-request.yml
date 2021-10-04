@@ -50,7 +50,7 @@ jobs:
           echo "Pull request to: ${{ github.base_ref }}"
           python3 ${{ github.workspace}}/.github/scripts/python/semversioner_prepare_release.py --head-ref "${{ github.head_ref }}" -t -d
           git pull && git add .semversioner/*
-          cat .semversioner/next-release/*
+          #cat .semversioner/next-release/*
           semversioner status
 
 
