@@ -5,6 +5,7 @@
 semversioner_messages_regex_filter_list = [
     r'^Merge branch.*$',
     r'^chore:.*$'
+    r'^no-change:.*$'
     ]
 
 # A list of messages to test evaluation with
