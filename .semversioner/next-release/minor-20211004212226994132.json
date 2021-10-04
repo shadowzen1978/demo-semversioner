@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Disabled feature branch workflow.  Updated PR workflow to (hopefully) check out head branch to prep release."
+}
