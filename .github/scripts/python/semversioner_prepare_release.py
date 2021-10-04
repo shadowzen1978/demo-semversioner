@@ -5,6 +5,11 @@
 # but that does necessitate an additional dependency and installation thereof.
 # Being that this is intended to be run in automation pipelines, not having to worry
 # About the installation of an additional dependency is probably worth the tradeoff.
+# TODO:
+# - use click to pass cli args to script for versatility and take values from workflow
+# especially need to get the head branch in pr
+import click
+#from click.decorators import option
 import datetime
 import os
 import pprint
@@ -16,15 +21,35 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # Set a bunch of flags here.  Eventually will have most of these
 # passable as cli args.
-debug_mode=True
-test_mode=True
-use_test_messages= False
-clean_release=True
-clean_action='delete'
+#debug_mode=True
+#test_mode=True
+#use_test_messages= False
+#clean_release=True
+#clean_action='delete'
 cwd = os.getcwd()
 scriptpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-def main(argv):
+
+
+@click.command(context_settings=dict(max_content_width=120))
+@click.option('--base-ref', default='', help='Optional.  If set, we will use this reference instead of'
+              'using the current branch.  This may be required in automation workflows that may not explicitly '
+              'checkout a branch to run actions.  Github actions on a pull request are such an example.')
+@click.option('--clean-action', type=click.Choice(['backup', 'delete'], case_sensitive=False), default='delete',
+               help='Optional.  If clean-release is specified, This detemines the type of action to take. '
+               'The default is to delete the content entirely.')
+@click.option('--clean-release/--no-clean-release', default=True, help='Optional.  Determines whether to clean '
+              'the next-release folder or not.  The default is to clean the folder.')
+@click.option('-d', '--debug', is_flag=True, help='If set, will output debug statements to console.')
+@click.option('--head-ref', default='', help='Optional.  If set, we will use this reference instead of'
+              'using the current branch.  This may be required in automation workflows that may not explicitly '
+              'checkout a branch to run actions.  Github actions on a pull request are such an example.')
+@click.option('-t', '--test', is_flag=True, help='Optional.  If set, script will not commit any changes but '
+              'will present information only.')
+@click.option('--use-test-messages', is_flag=True, help='Optional.  If set, will use test messages defined '
+              'in config instead of getting real commit messages.  Useful for evaluated message conditions '
+              'to determine change type.')
+def main(base_ref, clean_action, clean_release, debug, head_ref, test, use_test_messages):
     """The main loop of this script.
     Will get a list of git messages by comparing the current branch to the
     remote default branch.  Then will parse the list of messages to eliminate
@@ -34,11 +59,22 @@ def main(argv):
     Afterwards, will pass the cleaned up list of messages to semversioner script
     to create a list of changes to prepare a release.
     """
+    # Initial setup
+    global debug_mode
+    debug_mode = debug
+    global test_mode
+    test_mode = test
+    global base_branch
+    base_branch = base_ref
+    global head_branch
+    head_branch = head_ref
+
+    # Get info
     current_branch = get_current_branch()
-    remote_branch = 'origin/{}'.format(get_default_branch())
+    remote_branch = 'origin/{}'.format(get_base_branch())
     repo_root = get_git_repo_top_level()
     semversioner_nr_folder = f"{repo_root}/.semversioner/next-release"
-    print(f"Current branch:  {current_branch}\nRemote_branch:  {remote_branch}\nRepo Root: {repo_root}")
+    print(f"Current (head) branch:  {current_branch}\nRemote (base) branch:  {remote_branch}\nRepo Root: {repo_root}")
 
     default_change_type = set_default_change_type(current_branch)
     if debug_mode is True:
@@ -53,7 +89,7 @@ def main(argv):
 
     message_filter = semversionerconfig.semversioner_messages_regex_filter_list
     if debug_mode is True:
-        print("*** Debug regex message filter:")
+        print("\n*** Debug regex message filter:")
         print(message_filter)
         print("Looping evaluated values:")
         for s in message_filter:
@@ -82,12 +118,7 @@ def main(argv):
         change_list=change_message_list,
         default_change_type=default_change_type,
         run_location = repo_root)
-    # TODO: from here will need to pass the list of messages to a function to create
-    # change messages, using the branch name as a default value and basic message parsing
-    # to determine if the commit message warrants a different level
-    # semversioner_create_change() - iterate through the list and create changes
-    # need to evaluate which directory to run in as semversioner creates files at level called.
-    # provide an option to clean .semversioner/next-release folder if needed.
+
 
 
 def semversioner_create_change(change_list, default_change_type, run_location):
@@ -177,6 +208,8 @@ def semversioner_clean_next_release(folder='.semversioner/next-release', action=
                     if debug_mode is True:
                         print(f"DEBUG: Removing file '{file}' from {folder}" )
                     os.remove(f"{folder}/{file}")
+                if debug_mode is True:
+                    print(f"DEBUG: Removing folder '{folder}'")
                 os.rmdir(folder)
     else:
         if debug_mode is True:
@@ -311,23 +344,28 @@ def remove_dupe_messages(messages):
 def get_current_branch():
     """We get the current working branch here.
     """
-    get_current_branch_command = 'git rev-parse --abbrev-ref HEAD'
-    subprocess_response = subprocess.run(get_current_branch_command, shell=True, capture_output=True)
-    current_branch = subprocess_response.stdout.decode('utf8').rstrip()
+    if head_branch:
+        current_branch = head_branch
+    else:
+        get_current_branch_command = 'git rev-parse --abbrev-ref HEAD'
+        subprocess_response = subprocess.run(get_current_branch_command, shell=True, capture_output=True)
+        current_branch = subprocess_response.stdout.decode('utf8').rstrip()
     return current_branch
 
 
 
-def get_default_branch():
-    """We get the default branch here.
+def get_base_branch():
+    """We get the base branch here.  In most cases this will be the default branch
     There is probably a better way to do this, or at least a way to work without assuming
     the remote is named 'origin' but this works for now.
     """
-    get_default_branch_command = "git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
-    subprocess_response = subprocess.run(get_default_branch_command, shell=True, capture_output=True)
-    default_branch =  subprocess_response.stdout.decode('utf8').rstrip()
+    if base_branch:
+        default_branch = base_branch
+    else:
+        get_base_branch_command = "git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
+        subprocess_response = subprocess.run(get_base_branch_command, shell=True, capture_output=True)
+        default_branch =  subprocess_response.stdout.decode('utf8').rstrip()
     return default_branch
 
-
 if __name__ == "__main__":  # Start the program
-    main(sys.argv[1:])
+    main() # pylint will complain about this function call having no args but it's handled by the click module

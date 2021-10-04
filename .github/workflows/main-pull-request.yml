@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Master branch Pull Request
+name: Master Branch Pull Request
 
 # Controls when the workflow will run
 on:
@@ -15,7 +15,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  semversioner:
+  semversioner-prepare-release:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -31,10 +31,11 @@ jobs:
           fetch-depth: 0
 
       # Runs a set of commands using the runners shell
-      - name: Install semversioner
+      - name: Install semversioner and dependencies
         run: |
           python3 --version
           pip3 install semversioner
+          pip3 install -r ${{ github.workspace}}/.github/scripts/python/requirements.txt
 
       # Determines change status for each commit.
       # Will remove dupes and filter list for unwanted comments.
@@ -45,9 +46,11 @@ jobs:
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Current branch $CURRENT_BRANCH"
           echo "Pull request from: ${{ github.head_ref }}"
-          python3 ${{ github.workspace}}/.github/scripts/python/semversioner_prepare_release.py
+          echo "Pull request to: ${{ github.base_ref }}"
+          python3 ${{ github.workspace}}/.github/scripts/python/semversioner_prepare_release.py --head-ref "${{ github.head_ref }}" -t
           git pull && git add .semversioner/*
           cat .semversioner/next-release/*
+          semversioner status
 
 
       - name: Show info
