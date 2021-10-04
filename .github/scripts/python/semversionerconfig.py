@@ -4,7 +4,7 @@
 # evaluated properly via regex commands
 semversioner_messages_regex_filter_list = [
     r'^Merge branch.*$',
-    r'^chore:.*$'
+    r'^chore:.*$',
     r'^no-change:.*$'
     ]
 
