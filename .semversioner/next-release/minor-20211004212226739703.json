@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "added check for head_ref in PR workflow."
+}

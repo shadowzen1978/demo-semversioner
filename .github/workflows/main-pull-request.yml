@@ -1,16 +1,13 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Feature branches
+name: Master Branch Pull Request
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  #push:
-  #  branches:
-  #    - 'feature/**'
-  #pull_request:
-  #  branches:
-  #    - 'feature/**'
+  pull_request:
+    branches:
+      - 'master'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -18,7 +15,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  semversioner-add-change:
+  semversioner-prepare-release:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -32,31 +29,29 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
       # Runs a set of commands using the runners shell
-      - name: Install semversioner
+      - name: Install semversioner and dependencies
         run: |
           python3 --version
           pip3 install semversioner
+          pip3 install -r ${{ github.workspace}}/.github/scripts/python/requirements.txt
 
-      # NOTE:
-      # Commenting out the below section for now as running this step on
-      # every push interrupt can interrupt developer workflow and productivity.
-      # I think there is a better way to run this during a Pull Request instead.
-      #
-      # Increments a minor change each push
-      # For now is just a test message but will incorporate logic
-      # to create a change for every commit since the last push.
-      # For now we get the last message that IS NOT a chore or merge message.
+      # Determines change status for each commit.
+      # Will remove dupes and filter list for unwanted comments.
+      # Does basic parsing of message text to determine if
       # Creates a .semversioner/next-release folder with hashes for each change
-      #- name: Minor bump
-      #  run: |
-      #    source ${{ github.workspace}}/.github/scripts/git-get-last-commit-not-merge.sh
-      #    echo "Message from script: $GIT_LAST_COMMIT_MSG"
-      #    if [ -z ${GIT_LAST_COMMIT_MSG+x} ];then GIT_LAST_COMMIT_MSG=$(git --no-pager log --pretty=format:"%s" -1); fi
-      #    semversioner add-change --type minor --description "$GIT_LAST_COMMIT_MSG"
-      #    git pull && git add .semversioner/*
-      #    cat .semversioner/next-release/*
+      - name: Prepare Release
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "Current branch $CURRENT_BRANCH"
+          echo "Pull request from: ${{ github.head_ref }}"
+          echo "Pull request to: ${{ github.base_ref }}"
+          python3 ${{ github.workspace}}/.github/scripts/python/semversioner_prepare_release.py --head-ref "${{ github.head_ref }}" -d
+          git pull && git add .semversioner/*
+          #cat .semversioner/next-release/*
+          semversioner status
 
 
       - name: Show info
@@ -71,5 +66,5 @@ jobs:
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          branch: ${{ github.head_ref }}
           tags: true

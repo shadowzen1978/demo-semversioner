@@ -1,0 +1,4 @@
+{
+  "type": "minor",
+  "description": "Revised python script to accept commandline args so we can pass correct branch info and update workflows to test."
+}
